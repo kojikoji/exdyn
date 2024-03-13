@@ -4,7 +4,7 @@ Exdyn is intended to analyze colocalization relation ships between single cell t
 ## Instalation
 You can install exdyn using pip command from your shell.
 ```shell
-pip install exdyn
+pip install exdyn  torchtext==0.6.0
 ```
 
 ## Usage
