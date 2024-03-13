@@ -341,14 +341,14 @@ def analyze_flux_into_clusters(adata, cluster, i, cluster_key):
     adata.obs[f'mode{i}_flux_into_{cluster}'] = np.linalg.norm(dp_dt, axis=1)
     return adata
 
-def calc_covdiff(adata, model, i, condition_key, batch_key, sep_num=10):
+def calc_covdiff(adata, model, mode, sign, condition_key, batch_key, sep_num=5):
     sub_idxs = commons.make_idx_list(adata.shape[0], sep_num)
     dv_dd = torch.cat(
         [commons.calc_jac(adata[idx], model, condition_key=condition_key, batch_key=batch_key)[0]
         for idx in sub_idxs], dim=0)
     dv_dd = commons.safe_numpy(dv_dd)
-    dd_dc = adata.obsm[f'dd_dc{i}']
-    adata.layers['cov_diff'] = (dv_dd @ dd_dc[:, :, np.newaxis]).reshape(dv_dd.shape[0], dv_dd.shape[1]) / np.max(adata.layers['lambda'], axis=0)
+    dd_dc = adata.obsm[f'dd_dc{mode}']
+    adata.layers[f'cov_diff_{mode * sign}'] = sign * (dv_dd @ dd_dc[:, :, np.newaxis]).reshape(dv_dd.shape[0], dv_dd.shape[1]) / np.mean(adata.layers['lambda'], axis=0)
     return adata
 
 def analyze_ligand_activity(condiff_vec, lt_df, q=0.99):
