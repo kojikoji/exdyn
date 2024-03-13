@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader, TensorDataset
-from . import utils, visualization
+from . import visualization
 from torch.utils.data import DataLoader
-from vicdyf import dataset
+from . import dataset
 import torch
 from scipy import stats
 import scanpy as sc
@@ -142,6 +142,8 @@ def estimate_two_cond_dynamics(adata, cond1, cond2, lit_envdyn, **kwargs):
     max_vec = np.max(sub_adata.layers['lambda'], axis=0)
     layer = 'cond_vel_diff'
     adata.layers[f'norm_{layer}'] = adata.layers[layer] / max_vec
+    sub_adata.obsm['cond_d_diff'] = sub_adata.obsm[f'cond_d_{cond2}'] - sub_adata.obsm[f'cond_d_{cond1}']
+    sub_adata.obsm['cond_dumap_diff'] = sub_adata.obsm[f'cond_dumap_{cond2}'] - sub_adata.obsm[f'cond_dumap_{cond1}']
     return sub_adata
 
 

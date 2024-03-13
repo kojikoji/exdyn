@@ -154,3 +154,4 @@ def calc_grid_flow(u_mat, d_embed, div_num):
     kernel = np.exp(- (dists/ sigma)**2)
     grid_flow = (d_embed[indeces] * kernel[..., np.newaxis]).mean(axis=1)
     return grids, grid_flow
+

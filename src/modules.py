@@ -409,7 +409,7 @@ class EnvDyn(pl.LightningModule):
         beta = self.softplus((self.logbeta)) * self.dt
         # normalize beta mean to 0.01
         raw_u_ld = diff_px_zd_ld * beta + px_z_ld * gamma
-        pu_zd_ld = self.relu(raw_u_ld)
+        pu_zd_ld = self.softplus_kinetics(raw_u_ld)
         # pu_zd_ld = self.softplus(raw_u_ld)
         # deviation
         # dyn_loss = 0 # self.relu(- diff_px_zd_ld * beta - px_z_ld * gamma).sum(dim=1).mean(dim=0)
@@ -772,7 +772,7 @@ class CvicdyfMultiKinetics(Cvicdyf):
         beta = self.softplus((self.logbeta * c.unsqueeze(-1)).sum(-2)) * self.dt
         # normalize beta mean to 0.01
         raw_u_ld = diff_px_zd_ld * beta + px_z_ld * gamma
-        pu_zd_ld = self.relu(raw_u_ld - self.relu(- raw_u_ld).detach())
+        pu_zd_ld = self.softplus_kinetics(raw_u_ld)
         # kinetics are set to maximizing stable state
         dyn_loss = torch.norm(raw_u_ld.detach()  - px_z_ld.detach() * gamma, dim=1, p=1).mean(dim=0)
         return(pu_zd_ld, dyn_loss)
