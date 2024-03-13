@@ -329,7 +329,7 @@ def conduct_jacobian_analysis(adata, model, top_modes=5):
         adata.obs[f'dd_dc_val{i}'] = np.linalg.norm(d_mat, axis=1)
     return adata
 
-def analyze_flux_into_clusters(adata, cluster, i, cluster_key):
+def analyze_flux_into_clusters(adata, cluster, i, sign, cluster_key):
     clusters = adata.obs[cluster_key].unique()
     cluster_vec_dict = {
         cluster: (adata.obs[cluster_key] == cluster).astype(int).values.reshape(-1, 1)
@@ -338,7 +338,7 @@ def analyze_flux_into_clusters(adata, cluster, i, cluster_key):
     d_mat = adata.obsm[f'dd_dc{i}']
     z_mat = adata.obsm['X_vicdyf_zl']
     dp_dt = commons.calc_d_embed_grad(z_mat, d_mat, cluster_vec_dict[cluster])[1]
-    adata.obs[f'mode{i}_flux_into_{cluster}'] = np.linalg.norm(dp_dt, axis=1)
+    adata.obs[f'mode{i}_flux_into_{cluster}'] = sign * dp_dt.reshape(-1)
     return adata
 
 def calc_covdiff(adata, model, mode, sign, condition_key, batch_key, sep_num=5):
